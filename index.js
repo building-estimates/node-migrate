@@ -13,6 +13,7 @@
 const MigrationSet = require('./lib/set')
 const FileStore = require('./lib/file-store')
 const loadMigrationsIntoSet = require('./lib/load-migrations')
+const registerCompiler = require('./lib/register-compiler')
 
 /**
  * Expose the migrate function.
@@ -61,3 +62,5 @@ exports.load = function (options, fn) {
     fn(err, set)
   })
 }
+
+exports.registerCompiler = registerCompiler

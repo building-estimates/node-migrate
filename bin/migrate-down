@@ -15,6 +15,7 @@ const pkg = require('../package.json')
 program
   .version(pkg.version)
   .usage('[options] <name>')
+  .description('specify "all" as <name> to revert all migrations at once')
   .option('-c, --chdir <dir>', 'Change the working directory', process.cwd())
   .option('-f, --state-file <path>', 'Set path to state file', '.migrate')
   .option('-s, --store <store>', 'Set the migrations store', path.join(__dirname, '..', 'lib', 'file-store'))

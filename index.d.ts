@@ -9,7 +9,7 @@ type MigrationOptions = {
 };
 
 type NextFunction = () => void;
-type CallbackError = (err: any) => void;
+type CallbackError = (err: Error | null) => void;
 
 export default function migrate(
   title: string,
@@ -36,8 +36,24 @@ declare class Migration {
   timestamp: number | null;
 }
 
+export interface StoreState {
+  lastRun?: string | undefined
+  migrations: Pick<Migration, 'title' | 'description' | 'timestamp'>[]
+}
+
+export declare interface BaseStore {
+  save(set: MigrationSet, cb: CallbackError): void;
+
+  load(
+    cb: (
+      err: Error | null,
+      store?: StoreState
+    ) => void
+  ): void;
+}
+
 export class MigrationSet extends EventEmitter {
-  constructor(store: FileStore);
+  constructor(store: BaseStore);
   addMigration(
     title: string,
     up: (next: NextFunction) => void,
@@ -60,16 +76,15 @@ export class MigrationSet extends EventEmitter {
   lastRun: string | null;
 }
 
-declare class FileStore {
+declare class FileStore implements BaseStore {
   constructor(path: string);
   save(set: MigrationSet, cb: CallbackError): void;
   load(
     cb: (
-      err: any,
-      store: {
-        lastRun?: string;
-        migrations: Pick<Migration, "title" | "description" | "timestamp">[];
-      }
+      err: Error | null,
+      store?: StoreState
     ) => void
   ): void;
 }
+
+export function registerCompiler(packageName: string): void;
