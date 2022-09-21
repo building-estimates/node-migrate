@@ -14,6 +14,7 @@ const MigrationSet = require('./lib/set')
 const FileStore = require('./lib/file-store')
 const loadMigrationsIntoSet = require('./lib/load-migrations')
 const registerCompiler = require('./lib/register-compiler')
+const Migration = require('./lib/migration')
 
 /**
  * Expose the migrate function.
@@ -54,6 +55,7 @@ exports.load = function (options, fn) {
   loadMigrationsIntoSet({
     set: set,
     store: store,
+    migrationsLoader: opts.migrationsLoader,
     migrationsDirectory: opts.migrationsDirectory,
     filterFunction: opts.filterFunction,
     sortFunction: opts.sortFunction,
@@ -64,3 +66,5 @@ exports.load = function (options, fn) {
 }
 
 exports.registerCompiler = registerCompiler
+
+exports.Migration = Migration

@@ -1,9 +1,14 @@
 import type { EventEmitter } from "events";
 
+type MigrationLoader = (
+  cb: (error?: any | null, result?: Migration[]) => void
+) => void;
+
 type MigrationOptions = {
   set?: MigrationSet;
   stateStore?: string | FileStore;
   migrationsDirectory?: string;
+  migrationsLoader?: MigrationLoader;
   filterFunction?: (migration: string) => boolean;
   sortFunction?: (migration1: Migration, migration2: Migration) => boolean;
 };
@@ -22,7 +27,7 @@ export function load(
   cb: (err: any, set: MigrationSet) => void
 ): void;
 
-declare class Migration {
+export class Migration {
   constructor(
     title: string,
     up: (next: NextFunction) => void,
@@ -37,19 +42,14 @@ declare class Migration {
 }
 
 export interface StoreState {
-  lastRun?: string | undefined
-  migrations: Pick<Migration, 'title' | 'description' | 'timestamp'>[]
+  lastRun?: string | undefined;
+  migrations: Pick<Migration, "title" | "description" | "timestamp">[];
 }
 
 export declare interface BaseStore {
   save(set: MigrationSet, cb: CallbackError): void;
 
-  load(
-    cb: (
-      err: Error | null,
-      store?: StoreState
-    ) => void
-  ): void;
+  load(cb: (err: Error | null, store?: StoreState) => void): void;
 }
 
 export class MigrationSet extends EventEmitter {
@@ -79,12 +79,7 @@ export class MigrationSet extends EventEmitter {
 declare class FileStore implements BaseStore {
   constructor(path: string);
   save(set: MigrationSet, cb: CallbackError): void;
-  load(
-    cb: (
-      err: Error | null,
-      store?: StoreState
-    ) => void
-  ): void;
+  load(cb: (err: Error | null, store?: StoreState) => void): void;
 }
 
 export function registerCompiler(packageName: string): void;
