@@ -10,7 +10,9 @@ const BASE = path.join(__dirname, 'fixtures', 'issue-33')
 const STATE = path.join(BASE, '.migrate')
 
 const A1 = ['1-up', '2-up', '3-up']
-const A2 = A1.concat(['3-down', '2-down', '1-down'])
+const A2 = A1.concat(['3-down'])
+const A3 = A2.concat(['2-down'])
+const A4 = A3.concat(['1-down'])
 
 describe('issue #33', function () {
   let set
@@ -40,9 +42,14 @@ describe('issue #33', function () {
 
           set.down(function (err) {
             assert.ifError(err)
-            assert.deepStrictEqual(db.issue33, A2)
+            assert.deepStrictEqual(db.issue33, A3)
 
-            done()
+            set.down(function (err) {
+              assert.ifError(err)
+              assert.deepStrictEqual(db.issue33, A4)
+
+              done()
+            })
           })
         })
       })
